@@ -1,25 +1,17 @@
-FROM python:3.11-alpine
+FROM alpine:3.8
 
-ENV APP_USER flaskuser
+RUN mkdir /var/flaskapp
 
-ENV APP_DIRECTORY /var/flaskapp
+WORKDIR /var/flaskapp
 
-RUN mkdir $APP_DIRECTORY
+COPY .  .
 
-RUN  adduser -h $APP_DIRECTORY -s /bin/sh -D -H $APP_USER
+RUN apk update
 
-WORKDIR $APP_DIRECTORY
+RUN apk add python3
 
-COPY ./code/ .
+RUN pip3 install -r requirements.txt
 
-RUN pip install -r requirements.txt
+EXPOSE 8080 
 
-RUN chown -R $APP_USER:$APP_USER $APP_DIRECTORY
-
-EXPOSE 8080
-
-USER flaskuser
-
-ENTRYPOINT ["python" ] 
-
-CMD ["app.py"]
+CMD ["python3","app.py"]
