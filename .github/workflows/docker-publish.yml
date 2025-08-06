@@ -1,9 +1,9 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image (SHA Tag)
 
 on:
   push:
     branches:
-      - main
+      - main  # Triggers on push to main
 
 jobs:
   build-and-push:
@@ -19,9 +19,12 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        run: docker build -t srusree/api-ipgeoloc:latest .
+      - name: Build Docker image with SHA tag
+        run: |
+          docker build -t srusree/api-ipgeoloc:latest -t srusree/api-ipgeoloc:${{ github.sha }} .
 
-      - name: Push Docker image
-        run: docker push srusree/api-ipgeoloc:latest
+      - name: Push Docker images
+        run: |
+          docker push srusree/api-ipgeoloc:latest
+          docker push srusree/api-ipgeoloc:${{ github.sha }}
 
